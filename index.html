@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minutes Of Meeting</title>
+    <!-- Quill CSS Theme -->
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet" />
+    <link rel="manifest" href="manifest.json">
+</head>
+<body>
+<div class="workspace">
+
+    <!-- Fixed Left Control Panel -->
+    <div class="sidebar">
+        <button class="action-btn" id="start-btn" onclick="startMeeting()">Start Meeting</button>
+
+        <span class="section-title">Attendance</span>
+
+        <div class="attendance-list">
+            <label><input type="checkbox" class="officer"> President: James Ga-as</label>
+            <label><input type="checkbox" class="officer"> Internal Vice President: Theo Pasia</label>
+            <label><input type="checkbox" class="officer"> External Vice President: AG Morial</label>
+            <label><input type="checkbox" class="officer"> Secretary: Allan Tagle</label>
+            <label><input type="checkbox" class="officer"> Assistant Secretary: Webster Isidor</label>
+            <label><input type="checkbox" class="officer"> Treasurer: Gwyneth Peria</label>
+            <label><input type="checkbox" class="officer"> Auditor: Galileon Destura</label>
+            <label><input type="checkbox" class="officer"> Business Manager: Alex Escobido</label>
+            <label><input type="checkbox" class="officer"> Public Information Officer: Arndria Basco</label>
+            <label><input type="checkbox" class="officer"> 1st Year Representative: Vincent Casuyac</label>
+            <label><input type="checkbox" class="officer"> 2nd Year Representative: Baberose Silmaro</label>
+            <label><input type="checkbox" class="officer"> 3rd Year Representative: Jacey Lorenz ...</label>
+            <label><input type="checkbox" class="officer"> 4th Year Representative: Giverphine Dej...</label>
+        </div>
+
+        <button class="action-btn" onclick="addAgenda()">Add Agenda</button>
+        <button class="action-btn" onclick="removeAgenda()">Remove Agenda</button>
+        <button class="action-btn" id="end-btn" style="margin-top: 10px;" onclick="endMeetingAndExport()">End Meeting & Export File</button>
+    </div>
+
+    <!-- Horizontally Scrolling Agenda Canvas (Empty initially, JS fills it) -->
+    <div id="agenda-canvas" class="agenda-canvas"></div>
+
+</div>
+
+<!-- Register the Service Worker -->
+<script>
+    if ("serviceWorker" in navigator) {
+        window.addEventListener("load", function() {
+            navigator.serviceWorker
+                .register("./sw.js")
+                .then(res => console.log("Service Worker registered successfully!"))
+                .catch(err => console.log("Service Worker registration failed:", err));
+        });
+    }
+</script>
+
+<!-- Quill JS Library -->
+<script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
+<!-- Custom Logic -->
+<script src="script.js"></script>
+</body>
+</html>
