@@ -6,7 +6,11 @@
     <title>Minutes Of Meeting</title>
     <!-- Quill CSS Theme -->
     <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
     <link rel="stylesheet" href="style.css">
+
+    <!-- Web App Manifest for Android/Desktop Installation -->
     <link rel="manifest" href="manifest.json">
 </head>
 <body>
@@ -19,19 +23,22 @@
         <span class="section-title">Attendance</span>
 
         <div class="attendance-list">
-            <label><input type="checkbox" class="officer"> President: James Ga-as</label>
+            <label><input type="checkbox" class="officer"> President: Galileon Destura</label>
             <label><input type="checkbox" class="officer"> Internal Vice President: Theo Pasia</label>
             <label><input type="checkbox" class="officer"> External Vice President: AG Morial</label>
             <label><input type="checkbox" class="officer"> Secretary: Allan Tagle</label>
-            <label><input type="checkbox" class="officer"> Assistant Secretary: Webster Isidor</label>
+            <label><input type="checkbox" class="officer"> Assistant Secretary: Webster Miguelle Isidor</label>
             <label><input type="checkbox" class="officer"> Treasurer: Gwyneth Peria</label>
-            <label><input type="checkbox" class="officer"> Auditor: Galileon Destura</label>
+            <label><input type="checkbox" class="officer"> Auditor: Raicin Caleb Candralo</label>
             <label><input type="checkbox" class="officer"> Business Manager: Alex Escobido</label>
             <label><input type="checkbox" class="officer"> Public Information Officer: Arndria Basco</label>
             <label><input type="checkbox" class="officer"> 1st Year Representative: Vincent Casuyac</label>
             <label><input type="checkbox" class="officer"> 2nd Year Representative: Baberose Silmaro</label>
-            <label><input type="checkbox" class="officer"> 3rd Year Representative: Jacey Lorenz ...</label>
-            <label><input type="checkbox" class="officer"> 4th Year Representative: Giverphine Dej...</label>
+            <label><input type="checkbox" class="officer"> 3rd Year Representative: Jacey Lorenz Gulmatico</label>
+            <label><input type="checkbox" class="officer"> 4th Year Representative: Giverphine Dejiga</label>
+            <label><input type="checkbox" class="officer"> Creatives Head: Fe Aubrey Oledan</label>
+            <label><input type="checkbox" class="officer"> Technical Head: Ace Jonathan Briones</label>
+            <label><input type="checkbox" class="officer"> Adviser: Hobert Abrigana</label>
         </div>
 
         <button class="action-btn" onclick="addAgenda()">Add Agenda</button>
@@ -39,12 +46,12 @@
         <button class="action-btn" id="end-btn" style="margin-top: 10px;" onclick="endMeetingAndExport()">End Meeting & Export File</button>
     </div>
 
-    <!-- Horizontally Scrolling Agenda Canvas (Empty initially, JS fills it) -->
+    <!-- Horizontally Scrolling Agenda Canvas -->
     <div id="agenda-canvas" class="agenda-canvas"></div>
 
 </div>
 
-<!-- Register the Service Worker -->
+<!-- Register the Service Worker for Offline Capabilities -->
 <script>
     if ("serviceWorker" in navigator) {
         window.addEventListener("load", function() {

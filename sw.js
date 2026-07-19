@@ -1,4 +1,4 @@
-const CACHE_NAME = "minutes-app-cache-v2";
+const CACHE_NAME = "minutes-app-cache-v3";
 
 // These are all the files the app needs to run offline, including the Quill library
 const assetsToCache = [

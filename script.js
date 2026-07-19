@@ -1,7 +1,8 @@
 let startTime = null;
 let endTime = null;
 let agendaCount = 0;
-let agendas = []; // Stores our Quill editor instances
+let agendas = [];
+let isMeetingRunning = false; // Tracks if the meeting has started
 
 // 1. Initialize the first agenda immediately when the app loads
 document.addEventListener('DOMContentLoaded', () => {
@@ -16,7 +17,6 @@ function addAgenda() {
     const column = document.createElement("div");
     column.className = "agenda-column";
 
-    // HTML structure for the new column, including the Quill wrapper
     column.innerHTML = `
         <div class="agenda-header">Agenda #${agendaCount}</div>
         <input type="text" class="agenda-title" placeholder="Agenda Title">
@@ -40,10 +40,7 @@ function addAgenda() {
         }
     });
 
-    // Save the column and its specific editor to our array
     agendas.push({ column, quill });
-
-    // Scroll the view to the far right automatically
     canvas.scrollLeft = canvas.scrollWidth;
 }
 
@@ -56,27 +53,52 @@ function removeAgenda() {
     }
 }
 
-// 4. Time Tracking
+// 4. Time Tracking & Validation Logic
 function startMeeting() {
+    if (isMeetingRunning) return; // Prevents clicking start multiple times
+
     const now = new Date();
     startTime = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    isMeetingRunning = true;
 
+    // Visual feedback for the Start button
     const startBtn = document.getElementById("start-btn");
-    startBtn.textContent = `Started at: ${startTime}`;
-    startBtn.style.backgroundColor = '#d4edda';
+    startBtn.innerHTML = `Started at: <strong>${startTime}</strong>`;
+    startBtn.style.backgroundColor = '#d4edda'; // Soft green
     startBtn.style.borderColor = '#c3e6cb';
+    startBtn.style.color = '#155724';
 }
 
 function endMeetingAndExport() {
+    // Validation: Check if the meeting ever started
+    if (!isMeetingRunning) {
+        alert("You cannot end a meeting that hasn't started yet! Please click 'Start Meeting' first.");
+        return;
+    }
+
     const now = new Date();
     endTime = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
     compileMinutes();
+    resetMeeting();
 }
-// 5. File Compilation and Export (HTML version)
-// 5. File Compilation and Export (HTML version)
+
+// Resets the button and state after exporting
+function resetMeeting() {
+    isMeetingRunning = false;
+    startTime = null;
+    endTime = null;
+
+    // Revert the Start button back to its default styling
+    const startBtn = document.getElementById("start-btn");
+    startBtn.textContent = "Start Meeting";
+    startBtn.style.backgroundColor = '#f8f9fa';
+    startBtn.style.borderColor = '#dcdcdc';
+    startBtn.style.color = '#333';
+}
+
 // 5. File Compilation and Export (HTML version)
 function compileMinutes() {
-    // 1. Initialize the HTML document structure with some clean CSS styling
     let output = `
     <!DOCTYPE html>
     <html lang="en">
@@ -84,11 +106,11 @@ function compileMinutes() {
         <meta charset="utf-8">
         <title>Minutes of Meeting</title>
         <style>
-            body { font-family: Arial, sans-serif; line-height: 1.6; max-width: 800px; margin: 40px auto; color: #333; padding: 20px; }
-            h1 { text-align: center; border-bottom: 2px solid #ccc; padding-bottom: 10px; margin-bottom: 30px; }
+            body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; line-height: 1.6; max-width: 800px; margin: 40px auto; color: #333; padding: 20px; }
+            h1 { text-align: center; border-bottom: 2px solid #eaeaea; padding-bottom: 10px; margin-bottom: 30px; }
             .section { margin-bottom: 30px; }
-            .agenda-block { border: 1px solid #ddd; padding: 20px; margin-bottom: 20px; border-radius: 5px; background: #fafafa; }
-            .agenda-title { font-weight: bold; font-size: 1.2em; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+            .agenda-block { border: 1px solid #eaeaea; padding: 20px; margin-bottom: 20px; border-radius: 8px; background: #fafafa; }
+            .agenda-title { font-weight: bold; font-size: 1.2em; margin-bottom: 15px; border-bottom: 1px solid #eaeaea; padding-bottom: 10px; }
             ul, ol { margin-top: 0; }
         </style>
     </head>
@@ -96,8 +118,8 @@ function compileMinutes() {
         <h1>MINUTES OF MEETING</h1>
         
         <div class="section">
-            <p><strong>START TIME:</strong> ${startTime || "Not recorded"}</p>
-            <p><strong>END TIME:</strong> ${endTime || "Not recorded"}</p>
+            <p><strong>START TIME:</strong> ${startTime}</p>
+            <p><strong>END TIME:</strong> ${endTime}</p>
         </div>
         
         <div class="section">
@@ -105,14 +127,12 @@ function compileMinutes() {
             <ul>
     `;
 
-    // 2. Compile Attendance into HTML list items
     const checkboxes = document.querySelectorAll(".officer");
     let attendeesFound = false;
 
     checkboxes.forEach(box => {
         if (box.checked) {
             const labelText = box.parentElement.textContent.trim();
-            // FIXED: Removed the invalid backslashes here
             output += `<li>${labelText}</li>\n`;
             attendeesFound = true;
         }
@@ -121,13 +141,10 @@ function compileMinutes() {
     if (!attendeesFound) output += "<li>No attendance recorded.</li>\n";
     output += `</ul></div>\n`;
 
-    // 3. Compile Agendas
     output += `<div class="section"><h2>AGENDAS</h2>\n`;
 
     agendas.forEach((agendaObj, index) => {
         const title = agendaObj.column.querySelector(".agenda-title").value.trim() || "Untitled Agenda";
-
-        // Pulls the raw, formatted HTML directly from the Quill editor
         const notesHTML = agendaObj.quill.root.innerHTML;
 
         output += `
@@ -139,7 +156,6 @@ function compileMinutes() {
 
     output += `</div></body></html>`;
 
-    // 4. Trigger File Download as .html
     const blob = new Blob([output], { type: "text/html" });
     const url = URL.createObjectURL(blob);
 
